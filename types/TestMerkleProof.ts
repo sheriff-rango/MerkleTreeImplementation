@@ -4,7 +4,6 @@
 import {
   BaseContract,
   BigNumber,
-  BigNumberish,
   BytesLike,
   CallOverrides,
   ContractTransaction,
@@ -20,56 +19,23 @@ import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 export interface TestMerkleProofInterface extends utils.Interface {
   contractName: "TestMerkleProof";
   functions: {
-    "buildTestMerkleTree(string[])": FunctionFragment;
-    "getStringHash(string)": FunctionFragment;
-    "getTestMerkleRoot()": FunctionFragment;
-    "getTotalTestMerkleTree()": FunctionFragment;
-    "hashes(uint256)": FunctionFragment;
-    "verifyData(string,uint256)": FunctionFragment;
+    "setMerkleRoot(bytes32)": FunctionFragment;
+    "verifyData(bytes32[],string)": FunctionFragment;
   };
 
   encodeFunctionData(
-    functionFragment: "buildTestMerkleTree",
-    values: [string[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getStringHash",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getTestMerkleRoot",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getTotalTestMerkleTree",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "hashes",
-    values: [BigNumberish]
+    functionFragment: "setMerkleRoot",
+    values: [BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "verifyData",
-    values: [string, BigNumberish]
+    values: [BytesLike[], string]
   ): string;
 
   decodeFunctionResult(
-    functionFragment: "buildTestMerkleTree",
+    functionFragment: "setMerkleRoot",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "getStringHash",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getTestMerkleRoot",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getTotalTestMerkleTree",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "hashes", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "verifyData", data: BytesLike): Result;
 
   events: {};
@@ -103,62 +69,38 @@ export interface TestMerkleProof extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    buildTestMerkleTree(
-      data: string[],
+    setMerkleRoot(
+      _merkleRoot: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    getStringHash(data: string, overrides?: CallOverrides): Promise<[string]>;
-
-    getTestMerkleRoot(overrides?: CallOverrides): Promise<[string]>;
-
-    getTotalTestMerkleTree(overrides?: CallOverrides): Promise<[string[]]>;
-
-    hashes(arg0: BigNumberish, overrides?: CallOverrides): Promise<[string]>;
-
     verifyData(
-      data: string,
-      index: BigNumberish,
+      _merkleProof: BytesLike[],
+      leaf: string,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
   };
 
-  buildTestMerkleTree(
-    data: string[],
+  setMerkleRoot(
+    _merkleRoot: BytesLike,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  getStringHash(data: string, overrides?: CallOverrides): Promise<string>;
-
-  getTestMerkleRoot(overrides?: CallOverrides): Promise<string>;
-
-  getTotalTestMerkleTree(overrides?: CallOverrides): Promise<string[]>;
-
-  hashes(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
-
   verifyData(
-    data: string,
-    index: BigNumberish,
+    _merkleProof: BytesLike[],
+    leaf: string,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   callStatic: {
-    buildTestMerkleTree(
-      data: string[],
+    setMerkleRoot(
+      _merkleRoot: BytesLike,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    getStringHash(data: string, overrides?: CallOverrides): Promise<string>;
-
-    getTestMerkleRoot(overrides?: CallOverrides): Promise<string>;
-
-    getTotalTestMerkleTree(overrides?: CallOverrides): Promise<string[]>;
-
-    hashes(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
-
     verifyData(
-      data: string,
-      index: BigNumberish,
+      _merkleProof: BytesLike[],
+      leaf: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
   };
@@ -166,51 +108,27 @@ export interface TestMerkleProof extends BaseContract {
   filters: {};
 
   estimateGas: {
-    buildTestMerkleTree(
-      data: string[],
+    setMerkleRoot(
+      _merkleRoot: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    getStringHash(data: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    getTestMerkleRoot(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getTotalTestMerkleTree(overrides?: CallOverrides): Promise<BigNumber>;
-
-    hashes(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
-
     verifyData(
-      data: string,
-      index: BigNumberish,
+      _merkleProof: BytesLike[],
+      leaf: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    buildTestMerkleTree(
-      data: string[],
+    setMerkleRoot(
+      _merkleRoot: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    getStringHash(
-      data: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getTestMerkleRoot(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getTotalTestMerkleTree(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    hashes(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     verifyData(
-      data: string,
-      index: BigNumberish,
+      _merkleProof: BytesLike[],
+      leaf: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

@@ -1,7 +1,15 @@
 const { expect } = require("chai");
+const { MerkleTree } = require('merkletreejs');
+const keccak256 = require('keccak256');
 
 // const { BigNumber, ethers } = require("ethers");
 const { network, ethers } = require("hardhat");
+
+function buildMerkleTree (sourceString) {
+	const leafNodes = sourceString.map(string => keccak256(string));
+	const merkleTree = new MerkleTree(leafNodes, keccak256, {sortPairs: true});
+	return merkleTree;
+}
 
 // Deploy and create a mock erc721 contract.
 // Test end to end auction
@@ -17,42 +25,57 @@ describe("Test Start", function () {
 	let user2;
 	let user3;
 	let user4;
+	let user5;
+
+	let merkleTree;
 
 	before(async function () {
+		console.log('before each')
 		TestMerkleProof = await ethers.getContractFactory("TestMerkleProof");
-		// [contractOwner, user1, user2, user3, user4] = await ethers.getSigner();
+		console.log(111, ethers)
+		// [contractOwner, addr1, addr2, addr3, addr4, addr5] = await ethers.getSigners();
 
 		TestMerkleProofContract = await TestMerkleProof.deploy();
 		await TestMerkleProofContract.deployed();
+
+		const sourceString = [
+			"string1",
+			"string2",
+			"string3",
+			"string4",
+			"string5"
+		];
+
+		merkleTree = buildMerkleTree(sourceString);
+		const rootHash = merkleTree.getRoot();
+		await TestMerkleProofContract.setMerkleRoot(rootHash);
 	});
 	describe("Build Merkle Tree", async function () {
-		it("Build Merkle Tree with Simple Texts", async function () {
-			const sourceString = [
-				"string1",
-				"string2",
-				"string3",
-				"string4",
-			];
-			await TestMerkleProofContract.buildTestMerkleTree(sourceString);
-			const merkleTreeRoot = await TestMerkleProofContract.getTestMerkleRoot();
-			console.log('merkleTreeRoot=', merkleTreeRoot);
-			const totalMerkleTree = await TestMerkleProofContract.getTotalTestMerkleTree();
-			console.log('totalMerkleTree=', totalMerkleTree);
-		});
-		// it("Verify 'error' should returns false", async function () {
-		// 	const verifyResult = await TestMerkleProofContract.verifyData(totalMerkleTree, merkleTreeRoot, 'error', 0);
-		// 	console.log('verify result for "error"', verifyResult);
-		// 	expect(verifyResult).to.equal(false);
+		// it("Permission check", async function () {
+		// 	const sourceString = [
+		// 		"string1",
+		// 		"string2",
+		// 		"string3",
+		// 		"string4",
+		// 		"string5"
+		// 	];
+
+		// 	const otherMerkleTree = buildMerkleTree(sourceString);
+		// 	const rootHash = otherMerkleTree.getRoot();
+
+		// 	await TestMerkleProofContract.connect(user1).setMerkleRoot(rootHash);
 		// });
-		it("Verify 'string1' should returns true", async function () {
-			const verifyResult = await TestMerkleProofContract.verifyData('string2', 1);
-			console.log('verify result for "string1"', verifyResult);
+		it("Verify 'error' should return false", async function () {
+			const hexProof = merkleTree.getHexProof(keccak256('error'));
+			console.log('hexProof\n', hexProof);
+			const verifyResult = await TestMerkleProofContract.verifyData(hexProof, 'error');
+			expect(verifyResult).to.equal(false);
+		});
+		it("Verify 'string2' should return true", async function () {
+			const hexProof = merkleTree.getHexProof(keccak256('string2'));
+			console.log('hexProof\n', hexProof);
+			const verifyResult = await TestMerkleProofContract.verifyData(hexProof, 'string2');
 			expect(verifyResult).to.equal(true);
 		});
-		// it("Verify 'string1' should returns true", async function () {
-		// 	const verifyResult = await TestMerkleProofContract.verifyData(totalMerkleTree, merkleTreeRoot, 'string1');
-		// 	console.log('verify result for "string1"', verifyResult);
-		// 	expect(verifyResult).to.equal(true);
-		// });
 	});
 });

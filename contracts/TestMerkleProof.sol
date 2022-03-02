@@ -1,6 +1,20 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.10;
 
+/**
+ * @dev These functions deal with verification of Merkle Trees proofs.
+ *
+ * The proofs can be generated using the JavaScript library
+ * https://github.com/miguelmota/merkletreejs[merkletreejs].
+ * Note: the hashing algorithm should be keccak256 and pair sorting should be enabled.
+ *
+ * See `test/utils/cryptography/MerkleProof.test.js` for some examples.
+ *
+ * WARNING: You should avoid using leaf values that are 64 bytes long prior to
+ * hashing, or use a hash function other than keccak256 for hashing leaves.
+ * This is because the concatenation of a sorted pair of internal nodes in
+ * the merkle tree could be reinterpreted as a leaf value.
+ */
 library MerkleProof {
     /**
      * @dev Returns true if a `leaf` can be proved to be a part of a Merkle tree
@@ -11,57 +25,54 @@ library MerkleProof {
     function verify(
         bytes32[] memory proof,
         bytes32 root,
-        bytes32 leaf,
-        uint256 index
+        bytes32 leaf
     ) internal pure returns (bool) {
-        bytes32 hash = leaf;
-
-        for (uint256 i = 0; i < proof.length; i++) {
-            bytes32 proofElement = proof[i];
-
-            if (index % 2 == 0) {
-                hash = keccak256(abi.encodePacked(hash, proofElement));
-            } else {
-                hash = keccak256(abi.encodePacked(proofElement, hash));
-            }
-
-            index = index / 2;
-        }
-
-        return hash == root;
+        return processProof(proof, leaf) == root;
     }
 
-    // function verify(
-    //     bytes32[] memory proof,
-    //     bytes32 root,
-    //     bytes32 leaf
-    // ) internal pure returns (bool) {
-    //     bytes32 computedHash = leaf;
+    /**
+     * @dev Returns the rebuilt hash obtained by traversing a Merkle tree up
+     * from `leaf` using `proof`. A `proof` is valid if and only if the rebuilt
+     * hash matches the root of the tree. When processing the proof, the pairs
+     * of leafs & pre-images are assumed to be sorted.
+     *
+     * _Available since v4.4._
+     */
+    function processProof(bytes32[] memory proof, bytes32 leaf)
+        internal
+        pure
+        returns (bytes32)
+    {
+        bytes32 computedHash = leaf;
+        for (uint256 i = 0; i < proof.length; i++) {
+            bytes32 proofElement = proof[i];
+            if (computedHash <= proofElement) {
+                // Hash(current computed hash + current element of the proof)
+                computedHash = _efficientHash(computedHash, proofElement);
+            } else {
+                // Hash(current element of the proof + current computed hash)
+                computedHash = _efficientHash(proofElement, computedHash);
+            }
+        }
+        return computedHash;
+    }
 
-    //     for (uint256 i = 0; i < proof.length; i++) {
-    //         bytes32 proofElement = proof[i];
-
-    //         if (computedHash <= proofElement) {
-    //             // Hash(current computed hash + current element of the proof)
-    //             computedHash = keccak256(
-    //                 abi.encodePacked(computedHash, proofElement)
-    //             );
-    //         } else {
-    //             // Hash(current element of the proof + current computed hash)
-    //             computedHash = keccak256(
-    //                 abi.encodePacked(proofElement, computedHash)
-    //             );
-    //         }
-    //     }
-
-    //     // Check if the computed hash (root) is equal to the provided root
-    //     return computedHash == root;
-    // }
+    function _efficientHash(bytes32 a, bytes32 b)
+        private
+        pure
+        returns (bytes32 value)
+    {
+        assembly {
+            mstore(0x00, a)
+            mstore(0x20, b)
+            value := keccak256(0x00, 0x40)
+        }
+    }
 }
 
 contract TestMerkleProof {
-    bytes32[] public hashes;
     address owner;
+    bytes32 merkleRoot;
 
     constructor() {
         owner = msg.sender;
@@ -72,56 +83,20 @@ contract TestMerkleProof {
         _;
     }
 
-    function buildTestMerkleTree(string[] memory data) external isOwner {
-        for (uint256 i = 0; i < data.length; i++) {
-            hashes.push(keccak256(abi.encodePacked(data[i])));
-        }
-
-        uint256 n = data.length;
-        uint256 offset = 0;
-
-        while (n > 0) {
-            for (uint256 i = 0; i < n - 1; i += 2) {
-                hashes.push(
-                    keccak256(
-                        abi.encodePacked(
-                            hashes[offset + i],
-                            hashes[offset + i + 1]
-                        )
-                    )
-                );
-            }
-            offset += n;
-            n = n / 2;
-        }
+    function setMerkleRoot(bytes32 _merkleRoot) public isOwner {
+        merkleRoot = _merkleRoot;
     }
 
-    function getTestMerkleRoot() public view returns (bytes32) {
-        return hashes[hashes.length - 1];
-    }
-
-    function getTotalTestMerkleTree() public view returns (bytes32[] memory) {
-        return hashes;
-    }
-
-    function getStringHash(string memory data) public pure returns (bytes32) {
-        return keccak256(abi.encodePacked(data));
-    }
-
-    function verifyData(string memory data, uint256 index)
+    function verifyData(bytes32[] calldata _merkleProof, string memory leaf)
         public
         view
         returns (bool)
     {
-        bytes32 leaf = keccak256(abi.encodePacked(data));
-
         return
-            MerkleProof.verify(hashes, hashes[hashes.length - 1], leaf, index);
+            MerkleProof.verify(
+                _merkleProof,
+                merkleRoot,
+                keccak256(abi.encodePacked(leaf))
+            );
     }
-
-    // function verifyData(string memory data) public view returns (bool) {
-    //     bytes32 leaf = keccak256(abi.encodePacked(data));
-
-    //     return MerkleProof.verify(hashes, hashes[hashes.length - 1], leaf);
-    // }
 }
