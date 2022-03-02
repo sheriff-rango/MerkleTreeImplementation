@@ -1,0 +1,145 @@
+{
+  "_format": "hh-sol-cache-2",
+  "files": {
+    "E:\\Projects\\Blockchain\\Merkle Tree\\contracts\\SimpleRewardDistributorFlat.sol": {
+      "lastModificationDate": 1646188257011,
+      "contentHash": "d6d639654af3fc1dec11c611b476edc6",
+      "sourceName": "contracts/SimpleRewardDistributorFlat.sol",
+      "solcConfig": {
+        "version": "0.7.0",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 800
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.6.0 <0.8.0",
+        ">=0.6.0 <0.8.0",
+        "^0.7.0"
+      ],
+      "artifacts": [
+        "IERC20",
+        "MerkleProof",
+        "SimpleRewardDistributor"
+      ]
+    },
+    "E:\\Projects\\Blockchain\\Merkle Tree\\contracts\\TestTokenWithNameAndSymbolFlat.sol": {
+      "lastModificationDate": 1646186058775,
+      "contentHash": "15eb9733044f1f595b968cc73934e8a7",
+      "sourceName": "contracts/TestTokenWithNameAndSymbolFlat.sol",
+      "solcConfig": {
+        "version": "0.7.0",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 800
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.6.0 <0.8.0",
+        ">=0.6.0 <0.8.0",
+        ">=0.6.0 <0.8.0",
+        ">=0.6.0 <0.8.0",
+        "^0.7.0"
+      ],
+      "artifacts": [
+        "Context",
+        "ERC20",
+        "IERC20",
+        "SafeMath",
+        "TestTokenWithNameAndSymbol"
+      ]
+    },
+    "E:\\Projects\\Blockchain\\Merkle Tree\\contracts\\TestMerkleProof.sol": {
+      "lastModificationDate": 1646206316472,
+      "contentHash": "e2bb8244c868821792434aa97f952e04",
+      "sourceName": "contracts/TestMerkleProof.sol",
+      "solcConfig": {
+        "version": "0.8.10",
+        "settings": {
+          "metadata": {
+            "bytecodeHash": "none",
+            "useLiteralContent": true
+          },
+          "optimizer": {
+            "enabled": true,
+            "runs": 800
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.10"
+      ],
+      "artifacts": [
+        "MerkleProof",
+        "TestMerkleProof"
+      ]
+    }
+  }
+}
