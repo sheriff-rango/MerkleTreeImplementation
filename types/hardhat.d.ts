@@ -17,9 +17,9 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC20__factory>;
     getContractFactory(
-      name: "SimpleRewardDistributor",
+      name: "SimpleRewardDistributorFlat",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.SimpleRewardDistributor__factory>;
+    ): Promise<Contracts.SimpleRewardDistributorFlat__factory>;
     getContractFactory(
       name: "TestMerkleProof",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -33,9 +33,9 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC20__factory>;
     getContractFactory(
-      name: "TestTokenWithNameAndSymbol",
+      name: "TestTokenWithNameAndSymbolFlat",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.TestTokenWithNameAndSymbol__factory>;
+    ): Promise<Contracts.TestTokenWithNameAndSymbolFlat__factory>;
 
     getContractAt(
       name: "IERC20",
@@ -43,10 +43,10 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IERC20>;
     getContractAt(
-      name: "SimpleRewardDistributor",
+      name: "SimpleRewardDistributorFlat",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.SimpleRewardDistributor>;
+    ): Promise<Contracts.SimpleRewardDistributorFlat>;
     getContractAt(
       name: "TestMerkleProof",
       address: string,
@@ -63,10 +63,10 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IERC20>;
     getContractAt(
-      name: "TestTokenWithNameAndSymbol",
+      name: "TestTokenWithNameAndSymbolFlat",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.TestTokenWithNameAndSymbol>;
+    ): Promise<Contracts.TestTokenWithNameAndSymbolFlat>;
 
     // default types
     getContractFactory(

@@ -133,11 +133,79 @@ library MerkleProof {
     }
 }
 
+pragma solidity >=0.6.0 <0.8.0;
+
+library MakeNodeString {
+    function composeNodeString(
+        uint256 index,
+        address account,
+        uint256 amount
+    ) internal pure returns (string memory) {
+        string memory indexStr = uint2str(index);
+        string memory accountStr = addressToString(account);
+        string memory amountStr = uint2str(amount);
+        string memory nodeString = concat(indexStr, accountStr);
+        nodeString = concat(nodeString, amountStr);
+        return nodeString;
+    }
+
+    function concat(string memory _s1, string memory _s2)
+        internal
+        pure
+        returns (string memory)
+    {
+        return string(abi.encodePacked(bytes(_s1), bytes(_s2)));
+    }
+
+    function addressToString(address _addr)
+        internal
+        pure
+        returns (string memory)
+    {
+        bytes32 value = bytes32(uint256(uint160(_addr)));
+        bytes memory alphabet = "0123456789abcdef";
+
+        bytes memory str = new bytes(42);
+        str[0] = "0";
+        str[1] = "x";
+        for (uint256 i = 0; i < 20; i++) {
+            str[2 + i * 2] = alphabet[uint256(uint8(value[i + 12] >> 4))];
+            str[3 + i * 2] = alphabet[uint256(uint8(value[i + 12] & 0x0f))];
+        }
+        return string(str);
+    }
+
+    function uint2str(uint256 _i)
+        internal
+        pure
+        returns (string memory _uintAsString)
+    {
+        if (_i == 0) {
+            return "0";
+        }
+        uint256 j = _i;
+        uint256 len;
+        while (j != 0) {
+            len++;
+            j /= 10;
+        }
+        bytes memory bstr = new bytes(len);
+        uint256 k = len - 1;
+        while (_i != 0) {
+            bstr[k--] = bytes1(uint8(48 + (_i % 10)));
+            _i /= 10;
+        }
+        return string(bstr);
+    }
+}
+
 // File: contracts/SimpleRewardDistributor.sol
 
 pragma solidity ^0.7.0;
 
-contract SimpleRewardDistributor {
+import "hardhat/console.sol";
+
+contract SimpleRewardDistributorFlat {
     event Claimed(uint256 index, address account, uint256 amount);
 
     address public immutable token;
@@ -159,6 +227,26 @@ contract SimpleRewardDistributor {
         claimedMap[index] = true;
     }
 
+    // function verifyData(bytes32[] calldata merkleProof, bytes32 node)
+    //     public
+    //     view
+    //     returns (bool)
+    // {
+    //     return MerkleProof.verify(merkleProof, merkleRoot, node);
+    // }
+
+    // function getNodeForProof(
+    //     uint256 index,
+    //     address account,
+    //     uint256 amount
+    // ) public view returns (bytes32) {
+    //     console.log("contract", index, account, amount);
+    //     string memory amountStr = integerToString(amount);
+    //     bytes32 node = keccak256(abi.encodePacked(index, account, amountStr));
+
+    //     return node;
+    // }
+
     function claim(
         uint256 index,
         address account,
@@ -168,7 +256,12 @@ contract SimpleRewardDistributor {
         require(!isClaimed(index), "MerkleDistributor: Drop already claimed.");
 
         // Verify the merkle proof.
-        bytes32 node = keccak256(abi.encodePacked(index, account, amount));
+        string memory nodeString = MakeNodeString.composeNodeString(
+            index,
+            account,
+            amount
+        );
+        bytes32 node = keccak256(abi.encodePacked(nodeString));
         require(
             MerkleProof.verify(merkleProof, merkleRoot, node),
             "MerkleDistributor: Invalid proof."

@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "E:\\Projects\\Blockchain\\Merkle Tree\\MerkleTreeImplementation\\contracts\\SimpleRewardDistributorFlat.sol": {
-      "lastModificationDate": 1646188257011,
-      "contentHash": "d6d639654af3fc1dec11c611b476edc6",
+      "lastModificationDate": 1646238733669,
+      "contentHash": "fa18e55c4fa5903f45be5be5314d1fa0",
       "sourceName": "contracts/SimpleRewardDistributorFlat.sol",
       "solcConfig": {
         "version": "0.7.0",
@@ -35,21 +35,25 @@
           }
         }
       },
-      "imports": [],
+      "imports": [
+        "hardhat/console.sol"
+      ],
       "versionPragmas": [
+        ">=0.6.0 <0.8.0",
         ">=0.6.0 <0.8.0",
         ">=0.6.0 <0.8.0",
         "^0.7.0"
       ],
       "artifacts": [
         "IERC20",
+        "MakeNodeString",
         "MerkleProof",
-        "SimpleRewardDistributor"
+        "SimpleRewardDistributorFlat"
       ]
     },
     "E:\\Projects\\Blockchain\\Merkle Tree\\MerkleTreeImplementation\\contracts\\TestTokenWithNameAndSymbolFlat.sol": {
-      "lastModificationDate": 1646186058775,
-      "contentHash": "15eb9733044f1f595b968cc73934e8a7",
+      "lastModificationDate": 1646221950432,
+      "contentHash": "af7ee1b8cdd5eab2f988acc008a8290b",
       "sourceName": "contracts/TestTokenWithNameAndSymbolFlat.sol",
       "solcConfig": {
         "version": "0.7.0",
@@ -94,7 +98,50 @@
         "ERC20",
         "IERC20",
         "SafeMath",
-        "TestTokenWithNameAndSymbol"
+        "TestTokenWithNameAndSymbolFlat"
+      ]
+    },
+    "E:\\Projects\\Blockchain\\Merkle Tree\\MerkleTreeImplementation\\node_modules\\hardhat\\console.sol": {
+      "lastModificationDate": 1646208353716,
+      "contentHash": "cc4777addd464ea56fa35b1c45df0591",
+      "sourceName": "hardhat/console.sol",
+      "solcConfig": {
+        "version": "0.8.10",
+        "settings": {
+          "metadata": {
+            "bytecodeHash": "none",
+            "useLiteralContent": true
+          },
+          "optimizer": {
+            "enabled": true,
+            "runs": 800
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.4.22 <0.9.0"
+      ],
+      "artifacts": [
+        "console"
       ]
     },
     "E:\\Projects\\Blockchain\\Merkle Tree\\MerkleTreeImplementation\\contracts\\TestMerkleProof.sol": {

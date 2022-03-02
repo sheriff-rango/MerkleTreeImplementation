@@ -7,8 +7,6 @@ import {
   BigNumberish,
   BytesLike,
   CallOverrides,
-  ContractTransaction,
-  Overrides,
   PopulatedTransaction,
   Signer,
   utils,
@@ -20,30 +18,15 @@ import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 export interface SimpleRewardDistributorInterface extends utils.Interface {
   contractName: "SimpleRewardDistributor";
   functions: {
-    "claim(uint256,address,uint256,bytes32[])": FunctionFragment;
     "isClaimed(uint256)": FunctionFragment;
-    "merkleRoot()": FunctionFragment;
-    "token()": FunctionFragment;
   };
 
-  encodeFunctionData(
-    functionFragment: "claim",
-    values: [BigNumberish, string, BigNumberish, BytesLike[]]
-  ): string;
   encodeFunctionData(
     functionFragment: "isClaimed",
     values: [BigNumberish]
   ): string;
-  encodeFunctionData(
-    functionFragment: "merkleRoot",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "token", values?: undefined): string;
 
-  decodeFunctionResult(functionFragment: "claim", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "isClaimed", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "merkleRoot", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "token", data: BytesLike): Result;
 
   events: {
     "Claimed(uint256,address,uint256)": EventFragment;
@@ -87,52 +70,16 @@ export interface SimpleRewardDistributor extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    claim(
-      index: BigNumberish,
-      account: string,
-      amount: BigNumberish,
-      merkleProof: BytesLike[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     isClaimed(
       index: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
-
-    merkleRoot(overrides?: CallOverrides): Promise<[string]>;
-
-    token(overrides?: CallOverrides): Promise<[string]>;
   };
-
-  claim(
-    index: BigNumberish,
-    account: string,
-    amount: BigNumberish,
-    merkleProof: BytesLike[],
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
 
   isClaimed(index: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
 
-  merkleRoot(overrides?: CallOverrides): Promise<string>;
-
-  token(overrides?: CallOverrides): Promise<string>;
-
   callStatic: {
-    claim(
-      index: BigNumberish,
-      account: string,
-      amount: BigNumberish,
-      merkleProof: BytesLike[],
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     isClaimed(index: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
-
-    merkleRoot(overrides?: CallOverrides): Promise<string>;
-
-    token(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {
@@ -145,40 +92,16 @@ export interface SimpleRewardDistributor extends BaseContract {
   };
 
   estimateGas: {
-    claim(
-      index: BigNumberish,
-      account: string,
-      amount: BigNumberish,
-      merkleProof: BytesLike[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     isClaimed(
       index: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    merkleRoot(overrides?: CallOverrides): Promise<BigNumber>;
-
-    token(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    claim(
-      index: BigNumberish,
-      account: string,
-      amount: BigNumberish,
-      merkleProof: BytesLike[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     isClaimed(
       index: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
-
-    merkleRoot(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    token(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

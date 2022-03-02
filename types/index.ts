@@ -2,13 +2,13 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { IERC20 } from "./IERC20";
-export type { SimpleRewardDistributor } from "./SimpleRewardDistributor";
+export type { SimpleRewardDistributorFlat } from "./SimpleRewardDistributorFlat";
 export type { TestMerkleProof } from "./TestMerkleProof";
 export type { ERC20 } from "./ERC20";
-export type { TestTokenWithNameAndSymbol } from "./TestTokenWithNameAndSymbol";
+export type { TestTokenWithNameAndSymbolFlat } from "./TestTokenWithNameAndSymbolFlat";
 
 export { IERC20__factory } from "./factories/IERC20__factory";
-export { SimpleRewardDistributor__factory } from "./factories/SimpleRewardDistributor__factory";
+export { SimpleRewardDistributorFlat__factory } from "./factories/SimpleRewardDistributorFlat__factory";
 export { TestMerkleProof__factory } from "./factories/TestMerkleProof__factory";
 export { ERC20__factory } from "./factories/ERC20__factory";
-export { TestTokenWithNameAndSymbol__factory } from "./factories/TestTokenWithNameAndSymbol__factory";
+export { TestTokenWithNameAndSymbolFlat__factory } from "./factories/TestTokenWithNameAndSymbolFlat__factory";
