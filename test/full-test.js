@@ -3,20 +3,19 @@ const { MerkleTree } = require('merkletreejs');
 const keccak256 = require('keccak256');
 const { BigNumber } = require("ethers");
 const { ethers } = require("hardhat");
+const web3 = require("web3");
 
 const rewardDistribution = require('./rewardDistributionForTest.json');
 
-function buildMerkleTree (users) {
-	const leafNodes = rewardDistribution.distribution.map(distribution => {
+function makeLeaves (users) {
+  return rewardDistribution.distribution.map(distribution => {
     let amount = BigNumber.from(distribution.amount.hex);
-    // amount = ethers.utils.formatUnits(amount, 1)
     amount = amount.toString();
-    const nodeString = '' + distribution.index + users[distribution.index + 1].address + amount;
-    console.log('node string=', nodeString);
+    amount = 1000 * (distribution.index + 1);
+    const nodeString = '' + distribution.index + users[distribution.index].address + amount;
+    // console.log('node string=', nodeString);
     return keccak256(nodeString)
   });
-	const merkleTree = new MerkleTree(leafNodes, keccak256, {sortPairs: true});
-	return merkleTree;
 }
 
 // Deploy and create a mock erc721 contract.
@@ -30,14 +29,20 @@ describe("Test Start", function () {
 	let contractOwner;
 	let users;
 
+  let leaves;
+  let root;
 	let merkleTree;
 
 	before(async function () {
     users = await ethers.getSigners()
     contractOwner = users[0];
 
-		merkleTree = buildMerkleTree(users);
+    leaves = makeLeaves(users);
+
+		merkleTree = new MerkleTree(leaves, keccak256, {sort: true});
 		const rootHash = merkleTree.getRoot();
+    root = rootHash;
+    console.log('test root', rootHash)
 
     TestTokenWithNameAndSymbolFlat = await ethers.getContractFactory("TestTokenWithNameAndSymbolFlat");
     TestTokenWithNameAndSymbolFlatContract = await TestTokenWithNameAndSymbolFlat.deploy(1e10, "TestToken", "TK");
@@ -48,6 +53,9 @@ describe("Test Start", function () {
 		SimpleRewardDistributorFlat = await ethers.getContractFactory("SimpleRewardDistributorFlat");
 		SimpleRewardDistributorFlatContract = await SimpleRewardDistributorFlat.deploy(TestTokenWithNameAndSymbolFlatContract.address, rootHash);
 		await SimpleRewardDistributorFlatContract.deployed();
+
+    const contractMerkleRoot = await SimpleRewardDistributorFlatContract.getMerkleRoot();
+    console.log('contract root', contractMerkleRoot)
 	});
   describe("Token Test", async function () {
 		it("Balance of contract owner should be 1e10", async function () {
@@ -64,15 +72,34 @@ describe("Test Start", function () {
       let amount = BigNumber.from("0x1eca955e9b65e00000");
       // amount = ethers.utils.formatUnits(amount, 1);
       amount = amount.toString()
-      console.log('test', amount)
-      const nodeString = '0' + users[1].address + amount;
-      const hexNode = keccak256(nodeString)
-      console.log('test', hexNode)
-      const hexProof = merkleTree.getHexProof(hexNode);
-      console.log('hexProof length', hexProof.length)
-      // const nodeFromContract = await SimpleRewardDistributorFlatContract.getNodeForProof(0, users[1].address, amount);
-      // console.log('from contract', nodeFromContract)
-      const tx = await SimpleRewardDistributorFlatContract.claim(0, users[1].address, amount, hexProof);
+      amount = 1000;
+      const nodeString = '0' + users[0].address + amount.toString();
+      // const hexNode = keccak256(nodeString)
+      console.log('test', nodeString)
+      
+      let abiEncodePackedString = ethers.utils.solidityPack(['string'], [nodeString]);
+      console.log(nodeString, '->', abiEncodePackedString);
+      
+      const otherHexNodes = web3.utils.soliditySha3({type: 'string', value: abiEncodePackedString});
+      console.log('otherHexNodes', otherHexNodes)
+      // let otherHexNode = ethers.utils.solidityKeccak256(['string'], [abiEncodePackedString]);
+      // console.log('test', 1, otherHexNode);
+      // otherHexNode = ethers.utils.soliditySha256(['string'], [abiEncodePackedString]);
+      // console.log('test', 2, otherHexNode);
+      // otherHexNode = ethers.utils.keccak256(abiEncodePackedString)
+      // console.log('test', 3, otherHexNode);
+      // otherHexNode = ethers.utils.sha256(abiEncodePackedString)
+      // console.log('test', 4, otherHexNode);
+
+      // const proof = merkleTree.getHexProof(hexNode);
+      const proof = merkleTree.getProof(leaves[0]).map(x => x.data);
+      console.log('hexProof length', proof.length)
+
+      console.log('test verify', merkleTree.verify(proof, leaves[0], root, keccak256));
+
+      const nodeFromContract = await SimpleRewardDistributorFlatContract.getNodeForProof(0, 1000, proof);
+      console.log('from contract', nodeFromContract)
+      // const tx = await SimpleRewardDistributorFlatContract.claim(0, users[1].address, amount, hexProof);
       // await tx.wait();
     })
   });

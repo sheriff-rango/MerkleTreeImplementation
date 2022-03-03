@@ -33,7 +33,8 @@
     "keccak256": "^1.0.6",
     "merkletreejs": "^0.2.30",
     "solidity-coverage": "^0.7.16",
-    "typechain": "^7.0.0"
+    "typechain": "^7.0.0",
+    "web3": "^1.7.0"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-etherscan": "^2.1.4",

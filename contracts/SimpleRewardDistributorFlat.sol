@@ -105,6 +105,17 @@ library MerkleProof {
      * sibling hashes on the branch from the leaf to the root of the tree. Each
      * pair of leaves and each pair of pre-images are assumed to be sorted.
      */
+
+    // function buildMerkleTree(string[] memory _data) internal pure {
+    //     bytes32[] hashes;
+
+    //     for (uint i = 0; i < _data.length; i++) {
+    //         hashes.push(keccak256(abi.encodePacked(_data[i])));
+    //     }
+    //     uint n = _data.length;
+    //     uint offset = 0;
+    // }
+    
     function verify(
         bytes32[] memory proof,
         bytes32 root,
@@ -219,6 +230,10 @@ contract SimpleRewardDistributorFlat {
         merkleRoot = merkleRoot_;
     }
 
+    function getMerkleRoot() public view returns (bytes32) {
+        return merkleRoot;
+    }
+
     function isClaimed(uint256 index) public view returns (bool) {
         return claimedMap[index];
     }
@@ -235,17 +250,26 @@ contract SimpleRewardDistributorFlat {
     //     return MerkleProof.verify(merkleProof, merkleRoot, node);
     // }
 
-    // function getNodeForProof(
-    //     uint256 index,
-    //     address account,
-    //     uint256 amount
-    // ) public view returns (bytes32) {
-    //     console.log("contract", index, account, amount);
-    //     string memory amountStr = integerToString(amount);
-    //     bytes32 node = keccak256(abi.encodePacked(index, account, amountStr));
+    function getNodeForProof(
+        uint256 index,
+        uint256 amount,
+        bytes32[] calldata merkleProof
+    ) public view returns (bytes32) {
+        console.log("contract", index, msg.sender, amount);
+        string memory nodeString = MakeNodeString.composeNodeString(
+            index,
+            msg.sender,
+            amount
+        );
+        console.log("contract", nodeString);
+        bytes32 node = keccak256(abi.encodePacked(nodeString));
+        // require(
+        //     MerkleProof.verify(merkleProof, merkleRoot, node),
+        //     "MerkleDistributor: Invalid proof."
+        // );
 
-    //     return node;
-    // }
+        return node;
+    }
 
     function claim(
         uint256 index,
@@ -261,6 +285,7 @@ contract SimpleRewardDistributorFlat {
             account,
             amount
         );
+        console.log("contract", nodeString);
         bytes32 node = keccak256(abi.encodePacked(nodeString));
         require(
             MerkleProof.verify(merkleProof, merkleRoot, node),
