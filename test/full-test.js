@@ -3,7 +3,6 @@ const { MerkleTree } = require('merkletreejs');
 const keccak256 = require('keccak256');
 const { BigNumber } = require("ethers");
 const { ethers } = require("hardhat");
-const web3 = require("web3");
 
 const rewardDistribution = require('./rewardDistributionForTest.json');
 

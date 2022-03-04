@@ -168,14 +168,6 @@ contract SimpleRewardDistributorFlat {
         claimedMap[index] = true;
     }
 
-    // function verifyData(bytes32[] calldata merkleProof, bytes32 node)
-    //     public
-    //     view
-    //     returns (bool)
-    // {
-    //     return MerkleProof.verify(merkleProof, merkleRoot, node);
-    // }
-
     function claim(
         uint256 index,
         uint256 amount,
