@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "E:\\Projects\\Blockchain\\Merkle Tree\\MerkleTreeImplementation\\contracts\\SimpleRewardDistributorFlat.sol": {
-      "lastModificationDate": 1646382906494,
-      "contentHash": "2b1ac9d281af308cf4a4ec20265f13b5",
+      "lastModificationDate": 1646390272186,
+      "contentHash": "78252d50825b5edcdbd6dbdc9f943c24",
       "sourceName": "contracts/SimpleRewardDistributorFlat.sol",
       "solcConfig": {
         "version": "0.7.0",
@@ -32,12 +32,11 @@
           },
           "metadata": {
             "useLiteralContent": true
-          }
+          },
+          "libraries": {}
         }
       },
-      "imports": [
-        "hardhat/console.sol"
-      ],
+      "imports": [],
       "versionPragmas": [
         ">=0.6.0 <0.8.0",
         ">=0.6.0 <0.8.0",
@@ -50,8 +49,8 @@
       ]
     },
     "E:\\Projects\\Blockchain\\Merkle Tree\\MerkleTreeImplementation\\contracts\\TestTokenWithNameAndSymbolFlat.sol": {
-      "lastModificationDate": 1646382829255,
-      "contentHash": "7b5ff2e420a5cd940ccc03442214965f",
+      "lastModificationDate": 1646390332397,
+      "contentHash": "082407f8888878c0c5b7f5d8f99f9ae9",
       "sourceName": "contracts/TestTokenWithNameAndSymbolFlat.sol",
       "solcConfig": {
         "version": "0.7.0",
@@ -80,12 +79,11 @@
           },
           "metadata": {
             "useLiteralContent": true
-          }
+          },
+          "libraries": {}
         }
       },
-      "imports": [
-        "hardhat/console.sol"
-      ],
+      "imports": [],
       "versionPragmas": [
         ">=0.6.0 <0.8.0",
         ">=0.6.0 <0.8.0",

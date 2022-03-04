@@ -367,8 +367,6 @@ library SafeMath {
 
 pragma solidity >=0.6.0 <0.8.0;
 
-import "hardhat/console.sol";
-
 /**
  * @dev Implementation of the {IERC20} interface.
  *

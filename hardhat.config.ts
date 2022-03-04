@@ -10,9 +10,14 @@ import { resolve } from "path";
 
 import { config as dotenvConfig } from "dotenv";
 import { HardhatUserConfig } from "hardhat/config";
-// import { NetworkUserConfig } from "hardhat/types";
+import { NetworkUserConfig } from "hardhat/types";
 
 dotenvConfig({ path: resolve(__dirname, "./.env") });
+
+const privateKey: string | undefined =
+  process.env.PRIVATE_KEY ?? "NO_PRIVATE_KEY";
+const alchemyApiKey: string | undefined =
+  process.env.ALCHEMY_API_KEY ?? "NO_ALCHEMY_API_KEY";
 
 const chainIds = {
   goerli: 5,
@@ -23,8 +28,14 @@ const chainIds = {
   ropsten: 3,
 };
 
-const privateKey: string | undefined =
-  process.env.PRIVATE_KEY ?? "NO_PRIVATE_KEY";
+function getChainConfig(network: keyof typeof chainIds): NetworkUserConfig {
+  const url = `https://eth-${network}.alchemyapi.io/v2/${alchemyApiKey}`;
+  return {
+    accounts: [`${privateKey}`],
+    chainId: chainIds[network],
+    url,
+  };
+}
 
 const config: HardhatUserConfig = {
   defaultNetwork: "hardhat",
@@ -53,6 +64,7 @@ const config: HardhatUserConfig = {
       url: `https://data-seed-prebsc-1-s1.binance.org:8545`,
       accounts: [`0x${privateKey}`],
     },
+    rinkeby: getChainConfig("rinkeby"),
   },
   paths: {
     artifacts: "./artifacts",
@@ -165,7 +177,7 @@ const config: HardhatUserConfig = {
     target: "ethers-v5",
   },
   etherscan: {
-    apiKey: process.env.BSC_API_KEY,
+    apiKey: process.env.ETHERSCAN_API_KEY,
   },
 };
 

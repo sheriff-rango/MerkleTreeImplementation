@@ -1,0 +1,35 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "contracts/SimpleRewardDistributorFlat.sol": {
+      "content": "// File: @openzeppelin/contracts/token/ERC20/IERC20.sol\n\n// SPDX-License-Identifier: MIT\n\npragma solidity >=0.6.0 <0.8.0;\n\n/**\n * @dev Interface of the ERC20 standard as defined in the EIP.\n */\ninterface IERC20 {\n    /**\n     * @dev Returns the amount of tokens in existence.\n     */\n    function totalSupply() external view returns (uint256);\n\n    /**\n     * @dev Returns the amount of tokens owned by `account`.\n     */\n    function balanceOf(address account) external view returns (uint256);\n\n    /**\n     * @dev Moves `amount` tokens from the caller's account to `recipient`.\n     *\n     * Returns a boolean value indicating whether the operation succeeded.\n     *\n     * Emits a {Transfer} event.\n     */\n    function transfer(address recipient, uint256 amount)\n        external\n        returns (bool);\n\n    /**\n     * @dev Returns the remaining number of tokens that `spender` will be\n     * allowed to spend on behalf of `owner` through {transferFrom}. This is\n     * zero by default.\n     *\n     * This value changes when {approve} or {transferFrom} are called.\n     */\n    function allowance(address owner, address spender)\n        external\n        view\n        returns (uint256);\n\n    /**\n     * @dev Sets `amount` as the allowance of `spender` over the caller's tokens.\n     *\n     * Returns a boolean value indicating whether the operation succeeded.\n     *\n     * IMPORTANT: Beware that changing an allowance with this method brings the risk\n     * that someone may use both the old and the new allowance by unfortunate\n     * transaction ordering. One possible solution to mitigate this race\n     * condition is to first reduce the spender's allowance to 0 and set the\n     * desired value afterwards:\n     * https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729\n     *\n     * Emits an {Approval} event.\n     */\n    function approve(address spender, uint256 amount) external returns (bool);\n\n    /**\n     * @dev Moves `amount` tokens from `sender` to `recipient` using the\n     * allowance mechanism. `amount` is then deducted from the caller's\n     * allowance.\n     *\n     * Returns a boolean value indicating whether the operation succeeded.\n     *\n     * Emits a {Transfer} event.\n     */\n    function transferFrom(\n        address sender,\n        address recipient,\n        uint256 amount\n    ) external returns (bool);\n\n    /**\n     * @dev Emitted when `value` tokens are moved from one account (`from`) to\n     * another (`to`).\n     *\n     * Note that `value` may be zero.\n     */\n    event Transfer(address indexed from, address indexed to, uint256 value);\n\n    /**\n     * @dev Emitted when the allowance of a `spender` for an `owner` is set by\n     * a call to {approve}. `value` is the new allowance.\n     */\n    event Approval(\n        address indexed owner,\n        address indexed spender,\n        uint256 value\n    );\n}\n\n// File: @openzeppelin/contracts/cryptography/MerkleProof.sol\n\npragma solidity >=0.6.0 <0.8.0;\n\n/**\n * @dev These functions deal with verification of Merkle trees (hash trees),\n */\nlibrary MerkleProof {\n    /**\n     * @dev Returns true if a `leaf` can be proved to be a part of a Merkle tree\n     * defined by `root`. For this, a `proof` must be provided, containing\n     * sibling hashes on the branch from the leaf to the root of the tree. Each\n     * pair of leaves and each pair of pre-images are assumed to be sorted.\n     */\n\n    function verify(\n        bytes32[] memory proof,\n        bytes32 root,\n        bytes32 leaf\n    ) internal pure returns (bool) {\n        bytes32 computedHash = leaf;\n\n        for (uint256 i = 0; i < proof.length; i++) {\n            bytes32 proofElement = proof[i];\n\n            if (computedHash <= proofElement) {\n                // Hash(current computed hash + current element of the proof)\n                computedHash = keccak256(\n                    abi.encodePacked(computedHash, proofElement)\n                );\n            } else {\n                // Hash(current element of the proof + current computed hash)\n                computedHash = keccak256(\n                    abi.encodePacked(proofElement, computedHash)\n                );\n            }\n        }\n\n        // Check if the computed hash (root) is equal to the provided root\n        return computedHash == root;\n    }\n}\n\n// File: contracts/SimpleRewardDistributor.sol\n\npragma solidity ^0.7.0;\npragma experimental ABIEncoderV2;\n\ncontract SimpleRewardDistributorFlat {\n    event Claimed(uint256 index, address account, uint256 amount);\n\n    address private immutable contracOwner;\n    address public immutable token;\n    bytes32[] private hashes;\n    bytes32 public immutable merkleRoot;\n\n    // This is a packed array of booleans.\n    mapping(uint256 => bool) private claimedMap;\n\n    constructor(address _token, bytes32 _merkleRoot) public {\n        token = _token;\n        merkleRoot = _merkleRoot;\n        contracOwner = msg.sender;\n    }\n\n    function getMerkleRoot() public view returns (bytes32) {\n        return merkleRoot;\n    }\n\n    function isClaimed(uint256 index) public view returns (bool) {\n        return claimedMap[index];\n    }\n\n    function _setClaimed(uint256 index) private {\n        claimedMap[index] = true;\n    }\n\n    // function verifyData(bytes32[] calldata merkleProof, bytes32 node)\n    //     public\n    //     view\n    //     returns (bool)\n    // {\n    //     return MerkleProof.verify(merkleProof, merkleRoot, node);\n    // }\n\n    function claim(\n        uint256 index,\n        uint256 amount,\n        bytes32[] calldata proof\n    ) external {\n        require(!isClaimed(index), \"MerkleDistributor: Drop already claimed.\");\n\n        // Verify the merkle proof.\n        bytes32 leaf = keccak256(abi.encodePacked(index, msg.sender, amount));\n\n        require(\n            MerkleProof.verify(proof, merkleRoot, leaf),\n            \"MerkleDistributor: Invalid proof.\"\n        );\n\n        // Mark it claimed and send the token.\n        require(\n            IERC20(token).transfer(msg.sender, amount),\n            \"MerkleDistributor: Transfer failed.\"\n        );\n\n        _setClaimed(index);\n\n        emit Claimed(index, msg.sender, amount);\n    }\n}\n"
+    }
+  },
+  "settings": {
+    "optimizer": {
+      "enabled": true,
+      "runs": 800
+    },
+    "outputSelection": {
+      "*": {
+        "*": [
+          "abi",
+          "evm.bytecode",
+          "evm.deployedBytecode",
+          "evm.methodIdentifiers",
+          "metadata",
+          "devdoc",
+          "userdoc",
+          "storageLayout",
+          "evm.gasEstimates"
+        ],
+        "": [
+          "ast"
+        ]
+      }
+    },
+    "metadata": {
+      "useLiteralContent": true
+    }
+  }
+}

@@ -36,7 +36,13 @@ describe("Test Start", function () {
   let root;
 	let merkleTree;
 
-	before(async function () {
+  async function claim(index, account, amount) {
+    const leaf = makeLeaf(index, account.address, amount);
+    const proof = merkleTree.getHexProof(leaf);
+    await SimpleRewardDistributorFlatContract.connect(account).claim(index, amount, proof);
+  }
+
+	beforeEach(async function () {
     users = await ethers.getSigners();
     contractOwner = users[0];
 
@@ -61,8 +67,8 @@ describe("Test Start", function () {
     await TestTokenWithNameAndSymbolFlatContract.mint(SimpleRewardDistributorFlatContract.address, totalSupply);
 	});
   describe("Token Test", async function () {
-		it("Balance of contract owner should be 3", async function () {
-			let balance = await TestTokenWithNameAndSymbolFlatContract.balanceOf(contractOwner.address);
+		it("Balance of SimpleRewardDistributorFlatContract should be 30000", async function () {
+			let balance = await TestTokenWithNameAndSymbolFlatContract.balanceOf(SimpleRewardDistributorFlatContract.address);
       balance = ethers.utils.formatEther(balance)
       expect(balance).to.equal('30000.0')
 		});
@@ -76,14 +82,38 @@ describe("Test Start", function () {
       const index = 1;
       const account = users[1];
       const amount = BigNumber.from("0x100bd33fb98ba00000");
-      const leaf = makeLeaf(index, account.address, amount);
-      const proof = merkleTree.getHexProof(leaf);
-      console.log('proof', proof.length);
-      await SimpleRewardDistributorFlatContract.connect(account).claim(index, amount, proof);
+      await claim(index, account, amount);
       let balance = await TestTokenWithNameAndSymbolFlatContract.balanceOf(account.address);
       balance = ethers.utils.formatEther(balance);
-      console.log('balance', balance);
-      expect(balance).to.not.equal("0.0");
+      claim();
+      expect(balance).to.equal(ethers.utils.formatEther(amount));
+    })
+  });
+  describe("Claim Security", async function () {
+    it("Invalid Index", async function () {
+      const index = 3;
+      const account = users[1];
+      const amount = BigNumber.from("0x100bd33fb98ba00000");
+      await expect(claim(index, account, amount)).to.be.revertedWith("MerkleDistributor: Invalid proof.");
+    });
+    it("Invalid user", async function () {
+      const index = 1;
+      const account = users[2];
+      const amount = BigNumber.from("0x19196a6eebbddc0000");
+      await expect(claim(index, account, amount)).to.be.revertedWith("MerkleDistributor: Invalid proof.");
+    });
+    it("Invalid amount", async function () {
+      const index = 1;
+      const account = users[1];
+      const amount = BigNumber.from("0x19196a6eebbddc0000");
+      await expect(claim(index, account, amount)).to.be.revertedWith("MerkleDistributor: Invalid proof.");
+    });
+    it("Multiple Claim", async function() {
+      const index = 1;
+      const account = users[1];
+      const amount = BigNumber.from("0x100bd33fb98ba00000");
+      await claim(index, account, amount);
+      await expect(claim(index, account, amount)).to.be.revertedWith("MerkleDistributor: Drop already claimed.");
     })
   });
 });

@@ -139,8 +139,6 @@ library MerkleProof {
 pragma solidity ^0.7.0;
 pragma experimental ABIEncoderV2;
 
-import "hardhat/console.sol";
-
 contract SimpleRewardDistributorFlat {
     event Claimed(uint256 index, address account, uint256 amount);
 
@@ -194,11 +192,12 @@ contract SimpleRewardDistributorFlat {
         );
 
         // Mark it claimed and send the token.
-        _setClaimed(index);
         require(
             IERC20(token).transfer(msg.sender, amount),
             "MerkleDistributor: Transfer failed."
         );
+
+        _setClaimed(index);
 
         emit Claimed(index, msg.sender, amount);
     }
