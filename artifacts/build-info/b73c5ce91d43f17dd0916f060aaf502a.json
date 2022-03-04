@@ -1,5 +1,5 @@
 {
-  "id": "8bc884342be6b6cc550a74ba419c30ae",
+  "id": "b73c5ce91d43f17dd0916f060aaf502a",
   "_format": "hh-sol-build-info-1",
   "solcVersion": "0.7.0",
   "solcLongVersion": "0.7.0+commit.9e61f92b",
@@ -35,8 +35,7 @@
       },
       "metadata": {
         "useLiteralContent": true
-      },
-      "libraries": {}
+      }
     }
   },
   "output": {

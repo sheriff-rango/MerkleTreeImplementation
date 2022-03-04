@@ -23,6 +23,7 @@ function makeLeaves (users) {
 
 // Deploy and create a mock erc721 contract.
 describe("Test Start", function () {
+  console.log('ethers', ethers)
 	let SimpleRewardDistributorFlat;
   let TestTokenWithNameAndSymbolFlat;
 
@@ -65,6 +66,7 @@ describe("Test Start", function () {
 		await SimpleRewardDistributorFlatContract.deployed();
 
     await TestTokenWithNameAndSymbolFlatContract.mint(SimpleRewardDistributorFlatContract.address, totalSupply);
+
 	});
   describe("Token Test", async function () {
 		it("Balance of SimpleRewardDistributorFlatContract should be 30000", async function () {

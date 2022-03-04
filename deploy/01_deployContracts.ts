@@ -4,6 +4,11 @@ const keccak256 = require("keccak256");
 const { MerkleTree } = require("merkletreejs");
 const { BigNumber } = require("ethers");
 
+const fs = require("fs");
+const path = require("path");
+
+const outputPath = path.join(__dirname, "../testOnRinkeby/merkle.json");
+
 const rewardDistribution = require("../rewardDistribution.json");
 
 function makeLeaf(index: number, address: string, amount: string) {
@@ -87,5 +92,7 @@ module.exports = async (hre: HardhatRuntimeEnvironment) => {
   } catch (err) {
     console.error(err);
   }
+
+  await fs.writeFileSync(outputPath, JSON.stringify(merkleTree));
 };
 module.exports.tags = ["all"];
