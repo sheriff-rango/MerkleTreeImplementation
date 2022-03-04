@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "E:\\Projects\\Blockchain\\Merkle Tree\\MerkleTreeImplementation\\contracts\\SimpleRewardDistributorFlat.sol": {
-      "lastModificationDate": 1646277577731,
-      "contentHash": "da920480d824f677cf29a3e29dc9a61e",
+      "lastModificationDate": 1646382906494,
+      "contentHash": "2b1ac9d281af308cf4a4ec20265f13b5",
       "sourceName": "contracts/SimpleRewardDistributorFlat.sol",
       "solcConfig": {
         "version": "0.7.0",
@@ -41,19 +41,17 @@
       "versionPragmas": [
         ">=0.6.0 <0.8.0",
         ">=0.6.0 <0.8.0",
-        ">=0.6.0 <0.8.0",
         "^0.7.0"
       ],
       "artifacts": [
         "IERC20",
-        "MakeNodeString",
         "MerkleProof",
         "SimpleRewardDistributorFlat"
       ]
     },
     "E:\\Projects\\Blockchain\\Merkle Tree\\MerkleTreeImplementation\\contracts\\TestTokenWithNameAndSymbolFlat.sol": {
-      "lastModificationDate": 1646221950432,
-      "contentHash": "af7ee1b8cdd5eab2f988acc008a8290b",
+      "lastModificationDate": 1646382829255,
+      "contentHash": "7b5ff2e420a5cd940ccc03442214965f",
       "sourceName": "contracts/TestTokenWithNameAndSymbolFlat.sol",
       "solcConfig": {
         "version": "0.7.0",
@@ -85,7 +83,9 @@
           }
         }
       },
-      "imports": [],
+      "imports": [
+        "hardhat/console.sol"
+      ],
       "versionPragmas": [
         ">=0.6.0 <0.8.0",
         ">=0.6.0 <0.8.0",

@@ -20,9 +20,8 @@ import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 export interface SimpleRewardDistributorFlatInterface extends utils.Interface {
   contractName: "SimpleRewardDistributorFlat";
   functions: {
-    "claim(uint256,address,uint256,bytes32[])": FunctionFragment;
+    "claim(uint256,uint256,bytes32[])": FunctionFragment;
     "getMerkleRoot()": FunctionFragment;
-    "getNodeForProof(uint256,uint256,bytes32[])": FunctionFragment;
     "isClaimed(uint256)": FunctionFragment;
     "merkleRoot()": FunctionFragment;
     "token()": FunctionFragment;
@@ -30,15 +29,11 @@ export interface SimpleRewardDistributorFlatInterface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "claim",
-    values: [BigNumberish, string, BigNumberish, BytesLike[]]
+    values: [BigNumberish, BigNumberish, BytesLike[]]
   ): string;
   encodeFunctionData(
     functionFragment: "getMerkleRoot",
     values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getNodeForProof",
-    values: [BigNumberish, BigNumberish, BytesLike[]]
   ): string;
   encodeFunctionData(
     functionFragment: "isClaimed",
@@ -53,10 +48,6 @@ export interface SimpleRewardDistributorFlatInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "claim", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getMerkleRoot",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getNodeForProof",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "isClaimed", data: BytesLike): Result;
@@ -107,20 +98,12 @@ export interface SimpleRewardDistributorFlat extends BaseContract {
   functions: {
     claim(
       index: BigNumberish,
-      account: string,
       amount: BigNumberish,
-      merkleProof: BytesLike[],
+      proof: BytesLike[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     getMerkleRoot(overrides?: CallOverrides): Promise<[string]>;
-
-    getNodeForProof(
-      index: BigNumberish,
-      amount: BigNumberish,
-      merkleProof: BytesLike[],
-      overrides?: CallOverrides
-    ): Promise<[string]>;
 
     isClaimed(
       index: BigNumberish,
@@ -134,20 +117,12 @@ export interface SimpleRewardDistributorFlat extends BaseContract {
 
   claim(
     index: BigNumberish,
-    account: string,
     amount: BigNumberish,
-    merkleProof: BytesLike[],
+    proof: BytesLike[],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   getMerkleRoot(overrides?: CallOverrides): Promise<string>;
-
-  getNodeForProof(
-    index: BigNumberish,
-    amount: BigNumberish,
-    merkleProof: BytesLike[],
-    overrides?: CallOverrides
-  ): Promise<string>;
 
   isClaimed(index: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
 
@@ -158,20 +133,12 @@ export interface SimpleRewardDistributorFlat extends BaseContract {
   callStatic: {
     claim(
       index: BigNumberish,
-      account: string,
       amount: BigNumberish,
-      merkleProof: BytesLike[],
+      proof: BytesLike[],
       overrides?: CallOverrides
     ): Promise<void>;
 
     getMerkleRoot(overrides?: CallOverrides): Promise<string>;
-
-    getNodeForProof(
-      index: BigNumberish,
-      amount: BigNumberish,
-      merkleProof: BytesLike[],
-      overrides?: CallOverrides
-    ): Promise<string>;
 
     isClaimed(index: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
 
@@ -192,20 +159,12 @@ export interface SimpleRewardDistributorFlat extends BaseContract {
   estimateGas: {
     claim(
       index: BigNumberish,
-      account: string,
       amount: BigNumberish,
-      merkleProof: BytesLike[],
+      proof: BytesLike[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     getMerkleRoot(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getNodeForProof(
-      index: BigNumberish,
-      amount: BigNumberish,
-      merkleProof: BytesLike[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     isClaimed(
       index: BigNumberish,
@@ -220,20 +179,12 @@ export interface SimpleRewardDistributorFlat extends BaseContract {
   populateTransaction: {
     claim(
       index: BigNumberish,
-      account: string,
       amount: BigNumberish,
-      merkleProof: BytesLike[],
+      proof: BytesLike[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     getMerkleRoot(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getNodeForProof(
-      index: BigNumberish,
-      amount: BigNumberish,
-      merkleProof: BytesLike[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
 
     isClaimed(
       index: BigNumberish,

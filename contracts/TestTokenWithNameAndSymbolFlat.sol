@@ -367,6 +367,8 @@ library SafeMath {
 
 pragma solidity >=0.6.0 <0.8.0;
 
+import "hardhat/console.sol";
+
 /**
  * @dev Implementation of the {IERC20} interface.
  *
@@ -741,12 +743,20 @@ contract ERC20 is Context, IERC20 {
 pragma solidity ^0.7.0;
 
 contract TestTokenWithNameAndSymbolFlat is ERC20 {
+    address owner;
+
     constructor(
-        uint256 totalSupply,
+        // uint256 totalSupply,
         string memory name,
         string memory symbol
     ) ERC20(name, symbol) {
-        _mint(msg.sender, totalSupply);
+        // _mint(msg.sender, totalSupply);
+        owner = msg.sender;
+    }
+
+    function mint(address mintAddress, uint256 totalSupply) public {
+        require(msg.sender == owner, "Must be owner");
+        _mint(mintAddress, totalSupply);
     }
 
     function setDecimalPlaces(uint8 decimals) public {

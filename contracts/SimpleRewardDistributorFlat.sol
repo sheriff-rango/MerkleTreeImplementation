@@ -106,16 +106,6 @@ library MerkleProof {
      * pair of leaves and each pair of pre-images are assumed to be sorted.
      */
 
-    // function buildMerkleTree(string[] memory _data) internal pure {
-    //     bytes32[] hashes;
-
-    //     for (uint i = 0; i < _data.length; i++) {
-    //         hashes.push(keccak256(abi.encodePacked(_data[i])));
-    //     }
-    //     uint n = _data.length;
-    //     uint offset = 0;
-    // }
-    
     function verify(
         bytes32[] memory proof,
         bytes32 root,
@@ -144,90 +134,28 @@ library MerkleProof {
     }
 }
 
-pragma solidity >=0.6.0 <0.8.0;
-
-library MakeNodeString {
-    function composeNodeString(
-        uint256 index,
-        address account,
-        uint256 amount
-    ) internal pure returns (string memory) {
-        string memory indexStr = uint2str(index);
-        string memory accountStr = addressToString(account);
-        string memory amountStr = uint2str(amount);
-        string memory nodeString = concat(indexStr, accountStr);
-        nodeString = concat(nodeString, amountStr);
-        return nodeString;
-    }
-
-    function concat(string memory _s1, string memory _s2)
-        internal
-        pure
-        returns (string memory)
-    {
-        return string(abi.encodePacked(bytes(_s1), bytes(_s2)));
-    }
-
-    function addressToString(address _addr)
-        internal
-        pure
-        returns (string memory)
-    {
-        bytes32 value = bytes32(uint256(uint160(_addr)));
-        bytes memory alphabet = "0123456789abcdef";
-
-        bytes memory str = new bytes(42);
-        str[0] = "0";
-        str[1] = "x";
-        for (uint256 i = 0; i < 20; i++) {
-            str[2 + i * 2] = alphabet[uint256(uint8(value[i + 12] >> 4))];
-            str[3 + i * 2] = alphabet[uint256(uint8(value[i + 12] & 0x0f))];
-        }
-        return string(str);
-    }
-
-    function uint2str(uint256 _i)
-        internal
-        pure
-        returns (string memory _uintAsString)
-    {
-        if (_i == 0) {
-            return "0";
-        }
-        uint256 j = _i;
-        uint256 len;
-        while (j != 0) {
-            len++;
-            j /= 10;
-        }
-        bytes memory bstr = new bytes(len);
-        uint256 k = len - 1;
-        while (_i != 0) {
-            bstr[k--] = bytes1(uint8(48 + (_i % 10)));
-            _i /= 10;
-        }
-        return string(bstr);
-    }
-}
-
 // File: contracts/SimpleRewardDistributor.sol
 
 pragma solidity ^0.7.0;
+pragma experimental ABIEncoderV2;
 
 import "hardhat/console.sol";
 
 contract SimpleRewardDistributorFlat {
     event Claimed(uint256 index, address account, uint256 amount);
 
+    address private immutable contracOwner;
     address public immutable token;
+    bytes32[] private hashes;
     bytes32 public immutable merkleRoot;
 
     // This is a packed array of booleans.
     mapping(uint256 => bool) private claimedMap;
 
-    constructor(address token_, bytes32 merkleRoot_) public {
-        token = token_;
-        merkleRoot = merkleRoot_;
+    constructor(address _token, bytes32 _merkleRoot) public {
+        token = _token;
+        merkleRoot = _merkleRoot;
+        contracOwner = msg.sender;
     }
 
     function getMerkleRoot() public view returns (bytes32) {
@@ -250,55 +178,28 @@ contract SimpleRewardDistributorFlat {
     //     return MerkleProof.verify(merkleProof, merkleRoot, node);
     // }
 
-    function getNodeForProof(
-        uint256 index,
-        uint256 amount,
-        bytes32[] calldata merkleProof
-    ) public view returns (bytes32) {
-        console.log("contract", index, msg.sender, amount);
-        string memory nodeString = MakeNodeString.composeNodeString(
-            index,
-            msg.sender,
-            amount
-        );
-        console.log("contract", nodeString);
-        bytes32 node = keccak256(abi.encodePacked(nodeString));
-        // require(
-        //     MerkleProof.verify(merkleProof, merkleRoot, node),
-        //     "MerkleDistributor: Invalid proof."
-        // );
-
-        return node;
-    }
-
     function claim(
         uint256 index,
-        address account,
         uint256 amount,
-        bytes32[] calldata merkleProof
+        bytes32[] calldata proof
     ) external {
         require(!isClaimed(index), "MerkleDistributor: Drop already claimed.");
 
         // Verify the merkle proof.
-        string memory nodeString = MakeNodeString.composeNodeString(
-            index,
-            account,
-            amount
-        );
-        console.log("contract", nodeString);
-        bytes32 node = keccak256(abi.encodePacked(nodeString));
+        bytes32 leaf = keccak256(abi.encodePacked(index, msg.sender, amount));
+
         require(
-            MerkleProof.verify(merkleProof, merkleRoot, node),
+            MerkleProof.verify(proof, merkleRoot, leaf),
             "MerkleDistributor: Invalid proof."
         );
 
         // Mark it claimed and send the token.
         _setClaimed(index);
         require(
-            IERC20(token).transfer(account, amount),
+            IERC20(token).transfer(msg.sender, amount),
             "MerkleDistributor: Transfer failed."
         );
 
-        emit Claimed(index, account, amount);
+        emit Claimed(index, msg.sender, amount);
     }
 }

@@ -27,6 +27,7 @@ export interface TestTokenWithNameAndSymbolFlatInterface
     "decimals()": FunctionFragment;
     "decreaseAllowance(address,uint256)": FunctionFragment;
     "increaseAllowance(address,uint256)": FunctionFragment;
+    "mint(address,uint256)": FunctionFragment;
     "name()": FunctionFragment;
     "setDecimalPlaces(uint8)": FunctionFragment;
     "symbol()": FunctionFragment;
@@ -51,6 +52,10 @@ export interface TestTokenWithNameAndSymbolFlatInterface
   ): string;
   encodeFunctionData(
     functionFragment: "increaseAllowance",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "mint",
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
@@ -84,6 +89,7 @@ export interface TestTokenWithNameAndSymbolFlatInterface
     functionFragment: "increaseAllowance",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setDecimalPlaces",
@@ -179,6 +185,12 @@ export interface TestTokenWithNameAndSymbolFlat extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    mint(
+      mintAddress: string,
+      totalSupply: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     name(overrides?: CallOverrides): Promise<[string]>;
 
     setDecimalPlaces(
@@ -229,6 +241,12 @@ export interface TestTokenWithNameAndSymbolFlat extends BaseContract {
   increaseAllowance(
     spender: string,
     addedValue: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  mint(
+    mintAddress: string,
+    totalSupply: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -284,6 +302,12 @@ export interface TestTokenWithNameAndSymbolFlat extends BaseContract {
       addedValue: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    mint(
+      mintAddress: string,
+      totalSupply: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     name(overrides?: CallOverrides): Promise<string>;
 
@@ -363,6 +387,12 @@ export interface TestTokenWithNameAndSymbolFlat extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    mint(
+      mintAddress: string,
+      totalSupply: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
     setDecimalPlaces(
@@ -417,6 +447,12 @@ export interface TestTokenWithNameAndSymbolFlat extends BaseContract {
     increaseAllowance(
       spender: string,
       addedValue: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    mint(
+      mintAddress: string,
+      totalSupply: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
