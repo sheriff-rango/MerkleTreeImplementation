@@ -90,10 +90,6 @@ export default class Generator {
 
     logger.info("Start transaction");
     try {
-      const txOption = {
-        gasPrice: parseUnits("110", "gwei"),
-        gasLimit: 2100000
-      };
       const tx = await SimpleRewardDistributorFlatContract.connect(
         signer
       ).claim(
@@ -110,3 +106,10 @@ export default class Generator {
     }
   }
 }
+/**
+ *
+ * @var TestTokenWithNameAndSymbolFlat: 0x6c0E009E7E48223C0E2ad4D1bD4A0d3E8EFBf3e3
+ * @var SimpleRewardDistributorFlat: 0xB9F4DaA03e15c89aDb66f7d76aeA707ED26bEee3
+ *
+ * @var transactionHash: 0x1ad688d8d17246bd45026510b09bc92830f80323c7eedfa280286508f9470fec
+ */
